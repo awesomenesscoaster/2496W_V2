@@ -1,0 +1,8 @@
+#include "robot.h"
+#include "piston.h"
+#include "pros/adi.hpp"
+#include "pros/imu.hpp"
+#include "pros/misc.h"
+#include "pros/misc.hpp"
+#include "pros/motors.h"
+#include "pros/motors.hpp"

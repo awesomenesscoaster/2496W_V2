@@ -16,4 +16,7 @@
 using namespace pros;
 using namespace std;
 
+extern Auton auton_selector(std::vector<Auton> autons); 
+
+
 #endif
