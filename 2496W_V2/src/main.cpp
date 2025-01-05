@@ -1,32 +1,31 @@
-#include "main.h"
+#include "../include/main.h"
+#include "../include/auton_obj.h"
+#include "../include/autons.h"
+#include "../include/controls.h"
+#include "../include/movement.h"
+#include "../include/pros/misc.h"
+#include "../include/pros/motors.h"
 
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
+#include "../include/piston.h"
+#include "../include/robot.h"
+#include <cmath>
+#include <iostream>
 
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
+using namespace std;
+
+Auton *auton;
+string names;
+
+void on_center_button() {}
+
 void initialize() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
+  controller.clear();
+  static Auton temp = auton_selector(autons);
+  names = temp.get_name();
+  auton = &temp;
 
-	pros::lcd::register_btn1_cb(on_center_button);
+  rotation.reset_position();
+  rotation.set_position(30000);
 }
 
 /**
@@ -36,58 +35,43 @@ void initialize() {
  */
 void disabled() {}
 
-/**
- * Runs after initialize(), and before autonomous when connected to the Field
- * Management System or the VEX Competition Switch. This is intended for
- * competition-specific initialization routines, such as an autonomous selector
- * on the LCD.
- *
- * This task will exit when the robot is enabled and autonomous or opcontrol
- * starts.
- */
 void competition_initialize() {}
 
-/**
- * Runs the user autonomous code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the autonomous
- * mode. Alternatively, this function may be called in initialize or opcontrol
- * for non-competition testing purposes.
- *
- * If the robot is disabled or communications is lost, the autonomous task
- * will be stopped. Re-enabling the robot will restart the task, not re-start it
- * from where it left off.
- */
-void autonomous() {}
+void autonomous() { (*auton).run(); }
 
-/**
- * Runs the operator control code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the operator
- * control mode.
- *
- * If no competition control is connected, this function will run immediately
- * following initialize().
- *
- * If the robot is disabled or communications is lost, the
- * operator control task will be stopped. Re-enabling the robot will restart the
- * task, not resume it from where it left off.
- */
+// double truncate2(double var){
+//   return std::trunc(var * 100)/100;
+// }
+
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr(1);
-	pros::Motor right_mtr(2);
+  long long time = 0;
+  int counter = 0;
+  rotation.reset();
+  rotation.set_position(30000);
+  // brake types
+  set_brake_coast(); // chassis coast
+  lift.set_brake_mode(MOTOR_BRAKE_HOLD);
+  intake.set_brake_mode(MOTOR_BRAKE_COAST);
+  first_stage.set_brake_mode(MOTOR_BRAKE_COAST);
 
-	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-		int left = master.get_analog(ANALOG_LEFT_Y);
-		int right = master.get_analog(ANALOG_RIGHT_Y);
+  controller.clear();
 
-		left_mtr = left;
-		right_mtr = right;
+  while (true) {
+    double chassis_temp =
+        (lf.get_temperature() + lm.get_temperature() + lb.get_temperature() +
+         rf.get_temperature() + rm.get_temperature() + rb.get_temperature()) /
+        6;
 
-		pros::delay(20);
-	}
+    int lift_pos = rotation.get_position();
+    print_info(counter, chassis_temp, lift_pos);
+    counter++;
+
+    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_UP)) {
+      autonomous();
+    }
+
+    driver();
+    pros::delay(2);
+    time += 2;
+  }
 }
