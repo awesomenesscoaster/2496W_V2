@@ -89,4 +89,25 @@ void driver()
     {
         lift.move(0);
     }
+
+    static bool clampState = false;
+    if (controller.get_digital_new_press(DIGITAL_DOWN))
+    {
+        clampState = !clampState;
+        clampP.set_value(clampState);
+    }
+
+    static bool intakeState = false;
+    if (controller.get_digital_new_press(DIGITAL_Y))
+    {
+        intakeState = !intakeState;
+        intakeP.set_value(intakeState);
+    }
+
+    static bool spikeState = false;
+    if (controller.get_digital_new_press(DIGITAL_B))
+    {
+        spikeState = !spikeState;
+        spikeP.set_value(spikeState);
+  }
 }
