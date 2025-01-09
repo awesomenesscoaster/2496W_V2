@@ -22,7 +22,12 @@ void initialize() {
   // static Auton temp = auton_selector(autons);
   // names = temp.get_name();	
   // auton = &temp;
-
+  pros::Task liftControlTask([]{
+    while (true) {
+      liftControl();
+      pros::delay(10);
+    }
+  });
 }
 
 /**
@@ -41,6 +46,31 @@ void autonomous() { (*auton).run(); }
 // }
 
 void opcontrol() {
+  long long time = 0;
+  int counter = 0;
+  rotation.reset();
+  rotation.set_position(30000);
+  // brake types
+  set_brake_coast(); // chassis coast
+  lift.set_brake_mode(MOTOR_BRAKE_HOLD);
+  intake.set_brake_mode(MOTOR_BRAKE_COAST);
 
+  controller.clear();
+
+  while (true) {
+    double chassis_temp =
+        (lf.get_temperature() + lm.get_temperature() + lb.get_temperature() +
+         rf.get_temperature() + rm.get_temperature() + rb.get_temperature()) / 6;
+    int lift_pos = rotation.get_position();
+    counter++;
+
+    if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_UP)) {
+      autonomous();
+    }
+
+    driver();
+    pros::delay(2);
+    time += 2;
+  }
 }
 
