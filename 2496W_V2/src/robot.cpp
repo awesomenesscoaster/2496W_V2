@@ -30,7 +30,7 @@ pros::IMU imu(2);
 
 pros::Optical optical(19);
 
-pros::Rotation rotation(14);
+pros::Rotation rotation(18);
 
 pros::ADIDigitalOut clampP(1, false);
 pros::ADIDigitalOut intakeP(2, true);

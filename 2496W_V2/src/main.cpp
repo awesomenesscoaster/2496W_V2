@@ -22,12 +22,21 @@ void initialize() {
   // static Auton temp = auton_selector(autons);
   // names = temp.get_name();	
   // auton = &temp;
+  optical.set_led_pwm(100); 
   pros::Task liftControlTask([]{
     while (true) {
       liftControl();
       pros::delay(10);
     }
   });
+
+
+  // pros::Task colorSortTask([]{
+  //   while (true) {
+  //     colorSort();
+  //     pros::delay(10);
+  //   }
+  // });
 }
 
 /**
@@ -49,7 +58,7 @@ void opcontrol() {
   long long time = 0;
   int counter = 0;
   rotation.reset();
-  rotation.set_position(30000);
+  rotation.set_position(0);
   // brake types
   set_brake_coast(); // chassis coast
   lift.set_brake_mode(MOTOR_BRAKE_HOLD);
@@ -69,6 +78,7 @@ void opcontrol() {
     }
 
     driver();
+    print_info(counter, chassis_temp, lift_pos);
     pros::delay(2);
     time += 2;
   }

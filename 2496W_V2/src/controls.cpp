@@ -14,10 +14,10 @@
 int abs_sgn(double input) { return input / std::abs(input); }
 
 const int numStates = 4; // number of lift states
-int states[numStates] = {0, 30, 40, 200}; // lift degrees
+int states[numStates] = {14, 40, 50, 120}; // lift degrees
 
 int currState = 0; // current state
-int target = 0; // target state
+int target = states[currState]; // target state
 
 void nextState() {
     currState += 1;
@@ -27,15 +27,16 @@ void nextState() {
     target = states[currState];
 }
 
-bool liftControlEnabled = true; // lift control enabled by default
+static bool liftControlEnabled = true; // lift control enabled by default
 
 void liftControl() {
-    double kp = 1.25;
-    if (liftControlEnabled) {
+    double kp = 2;
+    if (liftControlEnabled){
         double error = target - (rotation.get_position() / 100.0);
         double velocity = kp * error;
         lift.move(velocity);
     }
+
 }
 
 void driver()
@@ -57,6 +58,7 @@ void driver()
 
     // ----------- Intake Code ---------- //
     if (controller.get_digital(DIGITAL_R1))
+
     {
         intake.move(127);
     }
@@ -70,12 +72,7 @@ void driver()
     }
 
     // ----------- Lift States Code ---------- //
-    if (controller.get_digital_new_press(DIGITAL_L1) && controller.get_digital_new_press(DIGITAL_L2))
-    {
-        if (!liftControlEnabled) {liftControlEnabled = true;}
-        nextState();
-    }
-    else if (controller.get_digital(DIGITAL_L1))
+    if (controller.get_digital(DIGITAL_L1))
     {
         if (liftControlEnabled) {liftControlEnabled = false;}
         lift.move(127);
@@ -85,10 +82,15 @@ void driver()
         if (liftControlEnabled) {liftControlEnabled = false;}
         lift.move(-127);
     }
-    else
+    else if (!liftControlEnabled)
     {
         lift.move(0);
     }
+    else
+    {
+        liftControl();
+    }
+   
 
     static bool clampState = false;
     if (controller.get_digital_new_press(DIGITAL_DOWN))
@@ -98,16 +100,34 @@ void driver()
     }
 
     static bool intakeState = false;
-    if (controller.get_digital_new_press(DIGITAL_Y))
+    if (controller.get_digital_new_press(DIGITAL_RIGHT))
     {
-        intakeState = !intakeState;
-        intakeP.set_value(intakeState);
+        if (!liftControlEnabled) {liftControlEnabled = true;}
+        nextState();
     }
+
 
     static bool spikeState = false;
     if (controller.get_digital_new_press(DIGITAL_B))
     {
         spikeState = !spikeState;
         spikeP.set_value(spikeState);
+  }
+}
+
+void print_info(int counter, float chassis_temp, int lift_pos)
+{
+  if (counter % 50 == 0 && counter % 100 != 0 && counter % 150 != 0)
+  {
+    controller.print(0, 0, "C: %f   ", float(chassis_temp));
+  }
+  if (counter % 100 == 0 && counter % 150 != 0)
+  {
+    controller.print(1, 0, "I: %d, L: %d          ", int(intake.get_temperature()), int(lift.get_temperature()));
+  }
+  if (counter % 150 == 0 && counter % 300 != 0)
+  {
+    controller.print(2, 0, "Lift pos: %d", lift_pos);
+    
   }
 }
