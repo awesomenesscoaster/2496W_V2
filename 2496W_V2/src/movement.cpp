@@ -11,18 +11,17 @@
 #include "pros/rtos.h"
 #include <iostream>
 #include <fstream>
-#include <list>
-
+#include <list> 
 
 // ------------ Chassis movement functions (PID, arcs, etc....) ------------ //
 
-void spin_left(float lPwr) { left.move(lPwr); }
+void spin_left(float lPwr) { Chassis::left.move(lPwr); }
 
-void spin_right(float rPwr) { right.move(rPwr); }
+void spin_right(float rPwr) { Chassis::right.move(rPwr); }
 
 void driver_move(float lPwr, float rPwr) {
-  left = lPwr;
-  right = rPwr;
+  Chassis::left = lPwr;
+  Chassis::right = rPwr;
 }
 
 void set_brake_coast() {

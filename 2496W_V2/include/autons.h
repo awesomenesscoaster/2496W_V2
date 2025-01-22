@@ -16,7 +16,13 @@
 using namespace pros;
 using namespace std;
 
+extern void red_safe();
+
+extern void blue_safe();
 extern Auton auton_selector(std::vector<Auton> autons); 
+
+extern std::vector<Auton> autons;
+
 
 
 #endif

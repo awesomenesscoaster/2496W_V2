@@ -10,11 +10,12 @@
 #include "auton_obj.h"
 #include <cmath>
 #include <iostream>
+#include <string>
 
 int abs_sgn(double input) { return input / std::abs(input); }
 
 const int numStates = 4; // number of lift states
-int states[numStates] = {14, 40, 50, 120}; // lift degrees
+int states[numStates] = {14, 40, 50, 130}; // lift degrees
 
 int currState = 0; // current state
 int target = states[currState]; // target state
@@ -36,8 +37,29 @@ void liftControl() {
         double velocity = kp * error;
         lift.move(velocity);
     }
-
 }
+
+
+static bool interupt = false; 
+void colorSort(bool color){ // true if red, false if blue
+    if (color) {
+        if (optical.get_proximity() <= 50 && optical.get_hue() > 0 && optical.get_hue() < 30){
+            interupt = true; 
+        }
+    }
+    else{
+        if (optical.get_proximity() <= 50 && optical.get_hue() > 300 && optical.get_hue() < 355){
+            interupt = true; 
+        }
+    }
+    if (interupt){
+        delay(100);
+        intake.move(0);
+        delay(15);
+        interupt = false; 
+    }
+}
+
 
 void driver()
 {
@@ -58,9 +80,10 @@ void driver()
 
     // ----------- Intake Code ---------- //
     if (controller.get_digital(DIGITAL_R1))
-
     {
-        intake.move(127);
+        if (!interupt){
+            intake.move(127);
+        }
     }
     else if (controller.get_digital(DIGITAL_R2))
     {
@@ -127,7 +150,6 @@ void print_info(int counter, float chassis_temp, int lift_pos)
   }
   if (counter % 150 == 0 && counter % 300 != 0)
   {
-    controller.print(2, 0, "Lift pos: %d", lift_pos);
-    
+    controller.print(2, 0, "Lift Pos: %d", lift_pos);
   }
 }

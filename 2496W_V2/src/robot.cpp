@@ -19,11 +19,12 @@ pros::Motor rf(12, MOTOR_GEARSET_06, false, MOTOR_ENCODER_DEGREES);
 pros::Motor rm(13, MOTOR_GEARSET_06, false, MOTOR_ENCODER_DEGREES); 
 pros::Motor rb(1, MOTOR_GEARSET_06, false, MOTOR_ENCODER_DEGREES); 
 
-pros::Motor_Group left({lf, lm, lb});
-pros::Motor_Group right({rf, rm, rb});
+namespace Chassis{
+    pros::Motor_Group left({lf, lm, lb});
+    pros::Motor_Group right({rf, rm, rb});
+}
 
 pros::Motor intake(11, MOTOR_GEARSET_06, false, MOTOR_ENCODER_DEGREES);
-
 pros::Motor lift(20, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES); //change port on this
 
 pros::IMU imu(2);

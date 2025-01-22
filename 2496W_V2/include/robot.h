@@ -17,9 +17,10 @@ extern pros::Motor rf;
 extern pros::Motor rm;
 extern pros::Motor rb;
 
-extern pros::Motor_Group left;
-extern pros::Motor_Group right;
-
+namespace Chassis{
+    extern pros::Motor_Group left;
+    extern pros::Motor_Group right;
+}
 extern pros::Motor intake;
 
 extern pros::Motor lift;
