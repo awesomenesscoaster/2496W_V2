@@ -37,4 +37,17 @@ extern pros::ADIDigitalOut spikeP;
 extern pros::ADIDigitalOut ptoP;
 extern pros::ADIDigitalOut blankP;
 
+
+namespace glb{
+    // This is all jank stuff for display code, pls ignore it lol
+
+    extern std::vector<pros::Motor> motorV;
+
+    extern std::string motor_labels[];
+
+    extern std::string efficiency_a[];
+
+    extern int temps_a[];
+}
+
 #endif

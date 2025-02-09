@@ -39,3 +39,49 @@ pros::ADIDigitalOut spikeP(3, false);
 pros::ADIDigitalOut ptoP(4, true);
 
 pros::ADIDigitalOut blankP(6, false);
+
+namespace glb{
+    // This is all jank stuff for display code, pls ignore it lol
+    std::vector<pros::Motor> motorV = {
+        rf,
+        rm,
+        rb,
+        lf,
+        lm,
+        lb,
+        intake,
+        lift
+    };
+    std::string motor_labels[] = {
+        "R. Top",
+        "R. Middle",
+        "R. Bottom",
+        "L. Top",
+        "L. Middle",
+        "L. Bottom",
+        "Intake",
+        "Lift"
+    };
+
+    std::string efficiency_a[] = {
+        "100%",
+        "R. Middle",
+        "R. Bottom",
+        "Intake 1",
+        "Intake 2"
+        "L. Top",
+        "L. Middle",
+        "L. Bottom"
+    };
+
+    int temps_a[] = {
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50
+    };
+}

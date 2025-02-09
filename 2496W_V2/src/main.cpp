@@ -5,6 +5,7 @@
 #include "movement.h"
 #include "pros/misc.h"
 #include "pros/motors.h"
+#include "displayC.h"
 
 #include "piston.h"
 #include "robot.h"
@@ -19,6 +20,8 @@ string names;
 void on_center_button() {}
 
 void initialize() {
+  disp::setupUI();
+	//lcd::initialize();
   controller.clear();
 
   static Auton temp = auton_selector(autons);
@@ -88,6 +91,10 @@ void opcontrol() {
     driver();
     print_info(counter, chassis_temp, lift_pos);
     pros::delay(2);
+
+    if (time%2000==0) disp::updateMotorTemps();
+		if (time%100==0) disp::temp::update_motor_stats();
+
     time += 2;  
     counter++;
   }
