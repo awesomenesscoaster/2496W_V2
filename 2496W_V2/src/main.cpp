@@ -27,7 +27,6 @@ void initialize() {
   const bool color = temp.get_color() == "red"; // True if red, False if Blue
   
   optical.set_led_pwm(80);
-  optical.set_integration_time(3);
 
   pros::Task liftControlTask([]{
     while (true) {
@@ -87,7 +86,6 @@ void opcontrol() {
     }
 
     driver();
-
     print_info(counter, chassis_temp, lift_pos);
     pros::delay(2);
     time += 2;  

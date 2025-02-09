@@ -54,12 +54,14 @@ Auton auton_selector(std::vector<Auton> autons) {
   }
 }
 
-void red_safe() {}
+void red_rush_right(){}
 
-void blue_safe(){}
+void blue_rush_left(){}
 
 std::vector<Auton> autons
 {   
-    Auton("Red Safe", red_safe, "red"),
-    Auton("Blue Safe", blue_safe, "blue")
+  Auton("red: RUSH", red_rush_right, "red"),
+  Auton("blue: RUSH", blue_rush_left, "blue")
+  // Auton("red: ", red_rush_right, "red"),
+  // Auton("blue: RUSH", blue_rush_left, "blue"),
 };

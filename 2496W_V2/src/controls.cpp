@@ -39,7 +39,6 @@ void liftControl() {
     }
 }
 
-
 static bool interupt = false; 
 void colorSort(bool color){ // true if red, false if blue
     if (color) {
@@ -54,7 +53,7 @@ void colorSort(bool color){ // true if red, false if blue
     }
     if (interupt){
         delay(100);
-        intake.move(0);
+        intake.move(-127);
         delay(15);
         interupt = false; 
     }
@@ -135,7 +134,7 @@ void driver()
     {
         spikeState = !spikeState;
         spikeP.set_value(spikeState);
-  }
+    }
 }
 
 void print_info(int counter, float chassis_temp, int lift_pos)
