@@ -27,7 +27,7 @@ void initialize() {
   static Auton temp = auton_selector(autons);
   names = temp.get_name();	
   auton = &temp;
-  const bool color = temp.get_color() == "red"; // True if red, False if Blue
+  // const bool color = temp.get_color() == "red"; // True if red, False if Blue
   
   optical.set_led_pwm(80);
 
@@ -38,12 +38,24 @@ void initialize() {
     }
   });
 
-  pros::Task runColorSort([color]{
+  // pros::Task runColorSort([color]{
+  //   while (true) {
+  //     colorSort(color);
+  //     pros::delay(5);
+  //   }
+  // });
+
+  pros::Task updateDisplay([]{
     while (true) {
-      colorSort(color);
-      pros::delay(5);
+      disp::update_battery();
+      disp::update_optical();
+      disp::update_diagnostic_log();
+      disp::update_optical();
+      pros::delay(100);
     }
   });
+
+
 
 }
 
@@ -73,8 +85,9 @@ void opcontrol() {
   intake.set_brake_mode(MOTOR_BRAKE_COAST);
 
   controller.clear();
+  
 
-  const bool color = names.find("red") != string::npos; // True if red, False if Blue
+  // const bool color = names.find("red") != string::npos; // True if red, False if Blue
 
   while (true) {
     double chassis_temp =
@@ -87,13 +100,20 @@ void opcontrol() {
     if (controller.get_digital_new_press(E_CONTROLLER_DIGITAL_UP)) {
       autonomous();
     }
+    
 
     driver();
     print_info(counter, chassis_temp, lift_pos);
     pros::delay(2);
 
-    if (time%2000==0) disp::updateMotorTemps();
+    if (time%200==0) disp::updateMotorTemps();
 		if (time%100==0) disp::temp::update_motor_stats();
+    if (time%4000==0) disp::update_match_timer(time/1000);
+    
+    // if (time%1000==0) disp::update_battery();
+    // if (time%4000==0) disp::update_match_timer(time/1000);
+    // if (time%500==0) disp::update_diagnostic_log();
+    // if (time%1000==0) disp::update_optical();
 
     time += 2;  
     counter++;

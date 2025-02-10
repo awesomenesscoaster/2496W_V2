@@ -310,7 +310,8 @@
     },
     "upload_options": {
       "description": " High Stakes",
-      "icon": "pros"
+      "icon": "pros",
+      "after": "screen"
     }
   }
 }
