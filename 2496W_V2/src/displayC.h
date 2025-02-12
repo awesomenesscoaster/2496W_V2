@@ -121,36 +121,7 @@ namespace disp{
 
     static lv_obj_t *img_field;
 
-    namespace temp{
-    void update_motor_stats() {
-        // Assuming motorV is accessible and has a method .at()
-        pros::Motor motor = glb::motorV.at(current_motor_index); 
-        
-        bool error;
-        char buffer[64]; // Buffer for formatting text
-
-        double draw = motor.get_current_draw();
-        if (draw>100000) error = true;
-        else error = false;
-
-        snprintf(buffer, sizeof(buffer), "%.2f %%", motor.get_efficiency());
-        lv_label_set_text(stat_labels[0], error ? "ERROR" : buffer);
-
-        snprintf(buffer, sizeof(buffer), "%d mA", draw);
-        lv_label_set_text(stat_labels[1], error ? "ERROR" : buffer);
-
-        snprintf(buffer, sizeof(buffer), "%d °C", glb::temps_a[current_motor_index]);
-        lv_label_set_text(stat_labels[2], error ? "ERROR" : buffer);
-
-        snprintf(buffer, sizeof(buffer), "%.2f Nm", motor.get_torque());
-        lv_label_set_text(stat_labels[3], error ? "ERROR" : buffer);
-
-        snprintf(buffer, sizeof(buffer), "%d", motor.get_port());
-        lv_label_set_text(stat_labels[4], buffer);
-    }
     
-    
-    }
 
 
     static lv_res_t btn_left_action(lv_obj_t *btn) {
@@ -437,22 +408,57 @@ namespace disp{
                 break;
         }
     }
-
-    void updateMotorTemps() {
-        char temp_str[10];
-        int temp;
-
-        for (int i = 0; i < num_motors; i++) {
-            temp = glb::temps_a[i];
-
-            // Update the line meter's value
-            lv_lmeter_set_value(motor_lmeters[i], temp);
-
-            // Update the label text
-            sprintf(temp_str, "%d°C", temp);
-            lv_label_set_text(motor_temp_labels[i], temp_str);
+    namespace temp{
+        void update_motor_stats() {
+            // Assuming motorV is accessible and has a method .at()
+            pros::Motor motor = glb::motorV.at(current_motor_index); 
+            
+            bool error;
+            char buffer[64]; // Buffer for formatting text
+    
+            double draw = motor.get_current_draw();
+            if (draw>100000) error = true;
+            else error = false;
+    
+            snprintf(buffer, sizeof(buffer), "%.2f %%", motor.get_efficiency());
+            lv_label_set_text(stat_labels[0], error ? "ERROR" : buffer);
+    
+            snprintf(buffer, sizeof(buffer), "%d mA", draw);
+            lv_label_set_text(stat_labels[1], error ? "ERROR" : buffer);
+    
+            snprintf(buffer, sizeof(buffer), "%d °C", motor.get_temperature());
+            lv_label_set_text(stat_labels[2], error ? "ERROR" : buffer);
+    
+            snprintf(buffer, sizeof(buffer), "%.2f Nm", motor.get_torque());
+            lv_label_set_text(stat_labels[3], error ? "ERROR" : buffer);
+    
+            snprintf(buffer, sizeof(buffer), "%d", motor.get_port());
+            lv_label_set_text(stat_labels[4], buffer);
         }
-    }
+
+        void updateMotorTemps() {
+            char temp_str[10];
+            int temp;
+            int index = 0; 
+    
+            for (int i = 0; i < num_motors; i++) {
+                // temp = glb::temps_a[i];
+                pros::Motor motor = glb::motorV.at(index); 
+
+                temp = motor.get_temperature();
+    
+                // Update the line meter's value
+                lv_lmeter_set_value(motor_lmeters[i], temp);
+    
+                // Update the label text
+                sprintf(temp_str, "%d°C", temp);
+                lv_label_set_text(motor_temp_labels[i], temp_str);
+            }
+        }
+        
+        
+        }
+    
 
 
     void switchView(lv_obj_t *view_container) {
@@ -583,11 +589,7 @@ namespace disp{
         createDispAutonView();
         createDispTSView();
         createDispDefView();
-        
-        
     }
-
-
 
     // temperature monitoring view for mid-match
     void createDisplayTempsView() {

@@ -106,7 +106,7 @@ void opcontrol() {
     print_info(counter, chassis_temp, lift_pos);
     pros::delay(2);
 
-    if (time%200==0) disp::updateMotorTemps();
+    if (time%1000==0) disp::temp::updateMotorTemps();
 		if (time%100==0) disp::temp::update_motor_stats();
     if (time%4000==0) disp::update_match_timer(time/1000);
     
