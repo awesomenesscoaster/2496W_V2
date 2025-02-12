@@ -443,7 +443,7 @@ namespace disp{
     
             for (int i = 0; i < num_motors; i++) {
                 // temp = glb::temps_a[i];
-                pros::Motor motor = glb::motorV.at(index); 
+                pros::Motor motor = glb::motorV.at(i); 
 
                 temp = motor.get_temperature();
     
