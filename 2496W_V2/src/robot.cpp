@@ -29,9 +29,11 @@ pros::Motor lift(20, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES); //change po
 
 pros::IMU imu(2);
 
-pros::Optical optical(19);
+pros::Optical optical(17);
 
 pros::Rotation rotation(18);
+
+pros::Rotation driveRotation(19);
 
 pros::ADIDigitalOut clampP(1, false);
 pros::ADIDigitalOut intakeP(2, true);

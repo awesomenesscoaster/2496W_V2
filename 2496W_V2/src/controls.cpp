@@ -40,24 +40,33 @@ void liftControl() {
 }
 
 static bool interupt = false; 
+
+static bool globalColor; 
+
 void colorSort(bool color){ // true if red, false if blue
-    if (color) {
-        if (optical.get_proximity() <= 50 && optical.get_hue() > 0 && optical.get_hue() < 30){
+    globalColor = color;
+    if (color){
+        if (optical.get_hue() > 200 && optical.get_hue() < 240){
             interupt = true; 
         }
     }
     else{
-        if (optical.get_proximity() <= 50 && optical.get_hue() > 300 && optical.get_hue() < 355){
+        if (optical.get_hue() > 0 && optical.get_hue() < 25){
             interupt = true; 
         }
-    }
+    } 
+
     if (interupt){
-        delay(100);
+        delay(200);
         intake.move(-127);
-        delay(15);
+        delay(20);
         interupt = false; 
     }
+    pros::delay(25);
+
 }
+
+
 
 
 void driver()
@@ -76,12 +85,16 @@ void driver()
     rPwr = lAxis - rAxis;
 
     driver_move(lPwr, rPwr);
+    
 
     // ----------- Intake Code ---------- //
     if (controller.get_digital(DIGITAL_R1))
     {
         if (!interupt){
-            intake.move(127);
+            intake.move(110);
+        }
+        else{
+            colorSort(globalColor);
         }
     }
     else if (controller.get_digital(DIGITAL_R2))
@@ -122,6 +135,13 @@ void driver()
     }
 
     static bool intakeState = false;
+
+    if (controller.get_digital_new_press(DIGITAL_A))
+    {
+        intakeState = !intakeState;
+        intakeP.set_value(intakeState);
+    }
+    
     if (controller.get_digital_new_press(DIGITAL_RIGHT))
     {
         if (!liftControlEnabled) {liftControlEnabled = true;}
@@ -149,6 +169,16 @@ void print_info(int counter, float chassis_temp, int lift_pos)
   }
   if (counter % 150 == 0 && counter % 300 != 0)
   {
-    controller.print(2, 0, "Lift Pos: %d", lift_pos);
+    controller.print(2, 0, "%d    ", driveRotation.get_position());
   }
+}
+
+void print_info_auton(int time, double error, double speed)
+{
+  if (time % 50 == 0 && time % 2000 != 0)
+    controller.print(0, 0, "Error: %.2f : %.2f    ", error, speed);
+  if (time % 100 == 0 && time % 150 != 0 && time % 2000 != 0)
+    controller.print(1, 0, "%.2f : %.2f          ", imu.get_heading());
+  if (time % 150 == 0 && time % 100 != 0 && time % 150 != 0 && time % 2000 != 0)
+    controller.print(2, 0, "%.2f | %.0f       ", error, time);
 }

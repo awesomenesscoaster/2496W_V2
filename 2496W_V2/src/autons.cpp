@@ -8,6 +8,7 @@
 
 // ---------- All autonomous routes --------- //f
 using namespace pros;
+using namespace pid; 
 
 Auton auton_selector(std::vector<Auton> autons) {
   short int selected = 0;
@@ -54,7 +55,9 @@ Auton auton_selector(std::vector<Auton> autons) {
   }
 }
 
-void red_rush_right(){}
+void red_rush_right(){
+  drive(1000);
+}
 
 void blue_rush_left(){}
 

@@ -14,6 +14,8 @@
 using namespace pros;
 
 namespace disp{
+
+    
     // setting up shapes for auton selector graphics
     static lv_obj_t *stat_labels[5]; // To hold labels for motor stats
     static int current_motor_index = 0;
@@ -45,6 +47,33 @@ namespace disp{
 
     lv_obj_t* line_arrow;
     lv_obj_t* end_circle;
+
+    void update_motor_stats() {
+        // Assuming motorV is accessible and has a method .at()
+        pros::Motor motor = glb::motorV.at(current_motor_index); 
+        
+        bool error;
+        char buffer[64]; // Buffer for formatting text
+
+        double draw = motor.get_current_draw();
+        if (draw>100000) error = true;
+        else error = false;
+
+        snprintf(buffer, sizeof(buffer), "%.2f %%", motor.get_efficiency());
+        lv_label_set_text(stat_labels[0], error ? "ERROR" : buffer);
+
+        snprintf(buffer, sizeof(buffer), "%d mA", draw);
+        lv_label_set_text(stat_labels[1], error ? "ERROR" : buffer);
+
+        snprintf(buffer, sizeof(buffer), "%d °C", motor.get_temperature());
+        lv_label_set_text(stat_labels[2], error ? "ERROR" : buffer);
+
+        snprintf(buffer, sizeof(buffer), "%.2f Nm", motor.get_torque());
+        lv_label_set_text(stat_labels[3], error ? "ERROR" : buffer);
+
+        snprintf(buffer, sizeof(buffer), "%d", motor.get_port());
+        lv_label_set_text(stat_labels[4], buffer);
+    }
 
 
 
@@ -145,14 +174,14 @@ namespace disp{
         current_motor_index--;
         if (current_motor_index<0) current_motor_index = 7;
         lv_label_set_text(motor_name_label, glb::motor_labels[current_motor_index].c_str());
-        temp::update_motor_stats();
+        update_motor_stats();
         return LV_RES_OK;
     }
     static lv_res_t btn_right_action_ts(lv_obj_t *btn) {
         current_motor_index++;
         if (current_motor_index>7) current_motor_index = 0;
         lv_label_set_text(motor_name_label, glb::motor_labels[current_motor_index].c_str());
-        temp::update_motor_stats();
+        update_motor_stats();
         return LV_RES_OK;
     }
     
@@ -409,32 +438,7 @@ namespace disp{
         }
     }
     namespace temp{
-        void update_motor_stats() {
-            // Assuming motorV is accessible and has a method .at()
-            pros::Motor motor = glb::motorV.at(current_motor_index); 
-            
-            bool error;
-            char buffer[64]; // Buffer for formatting text
-    
-            double draw = motor.get_current_draw();
-            if (draw>100000) error = true;
-            else error = false;
-    
-            snprintf(buffer, sizeof(buffer), "%.2f %%", motor.get_efficiency());
-            lv_label_set_text(stat_labels[0], error ? "ERROR" : buffer);
-    
-            snprintf(buffer, sizeof(buffer), "%d mA", draw);
-            lv_label_set_text(stat_labels[1], error ? "ERROR" : buffer);
-    
-            snprintf(buffer, sizeof(buffer), "%d °C", motor.get_temperature());
-            lv_label_set_text(stat_labels[2], error ? "ERROR" : buffer);
-    
-            snprintf(buffer, sizeof(buffer), "%.2f Nm", motor.get_torque());
-            lv_label_set_text(stat_labels[3], error ? "ERROR" : buffer);
-    
-            snprintf(buffer, sizeof(buffer), "%d", motor.get_port());
-            lv_label_set_text(stat_labels[4], buffer);
-        }
+        
 
         void updateMotorTemps() {
             char temp_str[10];
@@ -770,7 +774,7 @@ namespace disp{
 
         lv_btn_set_action(left_btn, LV_BTN_ACTION_CLICK, btn_left_action_ts);
         lv_btn_set_action(right_btn, LV_BTN_ACTION_CLICK, btn_right_action_ts);
-        temp::update_motor_stats();
+        update_motor_stats();
     }
     const int checklist_count =  6; // Adjust based on your actual checklist size
     const char *checklist_items[checklist_count] = {
@@ -910,10 +914,10 @@ namespace disp{
     }  
     void update_optical(){
         int hue = optical.get_hue();
-        if (hue == NULL) {
-            lv_label_set_text(optical_label, "Optical Hue: No Value");
-            return;
-        }
+        // if (hue == NULL) {
+        //     lv_label_set_text(optical_label, "Optical Hue: No Value");
+        //     return;
+        // }
         const char* color_name;
 
         if (hue < 30 || hue >= 330) {

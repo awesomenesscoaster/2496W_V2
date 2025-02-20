@@ -29,6 +29,8 @@ extern pros::IMU imu;
 
 extern pros::Rotation rotation;
 
+extern pros::Rotation driveRotation;
+
 extern pros::Optical optical; 
 
 extern pros::ADIDigitalOut clampP;
@@ -36,6 +38,8 @@ extern pros::ADIDigitalOut intakeP;
 extern pros::ADIDigitalOut spikeP;
 extern pros::ADIDigitalOut ptoP;
 extern pros::ADIDigitalOut blankP;
+
+
 
 
 namespace glb{

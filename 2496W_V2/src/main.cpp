@@ -20,16 +20,30 @@ string names;
 void on_center_button() {}
 
 void initialize() {
-  disp::setupUI();
+  //disp::setupUI();
 	//lcd::initialize();
   controller.clear();
+
+  imu.tare();
+
+  driveRotation.set_reversed(true);
 
   static Auton temp = auton_selector(autons);
   names = temp.get_name();	
   auton = &temp;
-  // const bool color = temp.get_color() == "red"; // True if red, False if Blue
+  bool color;
   
-  optical.set_led_pwm(80);
+  if (temp.get_color() == "red"){
+    color = true;
+  }
+  else{
+    color = false;
+  }
+  //const bool color = temp.get_color() == "red"; // True if red, False if Blue
+  
+  optical.set_led_pwm(100);
+
+  // pros::Task TaskColor(colorSort);
 
   pros::Task liftControlTask([]{
     while (true) {
@@ -38,22 +52,24 @@ void initialize() {
     }
   });
 
-  // pros::Task runColorSort([color]{
-  //   while (true) {
-  //     colorSort(color);
-  //     pros::delay(5);
-  //   }
-  // });
-
-  pros::Task updateDisplay([]{
+  pros::Task colorSortTask([color]{
     while (true) {
-      disp::update_battery();
-      disp::update_optical();
-      disp::update_diagnostic_log();
-      disp::update_optical();
-      pros::delay(100);
+      colorSort(color);
+      pros::delay(10);
     }
   });
+  
+
+
+  // pros::Task updateDisplay([]{
+  //   while (true) {
+  //     disp::update_battery();
+  //     disp::update_optical();
+  //     disp::update_diagnostic_log();
+  //     disp::update_optical();
+  //     pros::delay(100);
+  //   }
+  // });
 
 
 
@@ -85,6 +101,10 @@ void opcontrol() {
   intake.set_brake_mode(MOTOR_BRAKE_COAST);
 
   controller.clear();
+
+  
+
+  
   
 
   // const bool color = names.find("red") != string::npos; // True if red, False if Blue
@@ -106,9 +126,9 @@ void opcontrol() {
     print_info(counter, chassis_temp, lift_pos);
     pros::delay(2);
 
-    if (time%1000==0) disp::temp::updateMotorTemps();
-		if (time%100==0) disp::temp::update_motor_stats();
-    if (time%4000==0) disp::update_match_timer(time/1000);
+    // if (time%1000==0) disp::temp::updateMotorTemps();
+		// if (time%100==0) disp::update_motor_stats();
+    // if (time%4000==0) disp::update_match_timer(time/1000);
     
     // if (time%1000==0) disp::update_battery();
     // if (time%4000==0) disp::update_match_timer(time/1000);
