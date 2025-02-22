@@ -56,7 +56,9 @@ Auton auton_selector(std::vector<Auton> autons) {
 }
 
 void red_rush_right(){
-  drive(1000);
+  drive(3000);
+  delay(100);
+  drive(400);
 }
 
 void blue_rush_left(){}

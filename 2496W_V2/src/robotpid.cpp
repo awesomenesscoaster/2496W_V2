@@ -23,7 +23,7 @@ namespace pid{
     double rCount = 0;
 
 
-    void drive(double target_dist, int timeout=2000, double mult=1.0, double max_speed=127, pros::ADIDigitalOut pis = blankP, int piston_time = 0, int piston_open_time = 0, int exit_time=100)
+    void drive(double target_dist, int timeout=6000, double mult=1.0, double max_speed=127, pros::ADIDigitalOut pis = blankP, int piston_time = 0, int piston_open_time = 0, int exit_time=100)
     {
 
         driveRotation.reset_position();
@@ -47,15 +47,15 @@ namespace pid{
         double error_range_time = 0;
 
 
-        double drive_kp = 4.62646 * std::pow(fabs(target_dist), -0.689989) + 0.20; 
+        double drive_kp = 4.42646 * std::pow(fabs(target_dist), -1.989989) + 0.1; 
 
         //double drive_kp = 5;
         //NEW:
         // 4.62646 * std::pow(fabs(target_dist), -0.689989) + 0.107432 for 0
         // 2.04035 * std::pow(fabs(target_dist), -0.534162) + 0.0949831 for 2.5
 
-        double drive_ki = 0.053; // 0.00049
-        double drive_kd = 2.9; //0 for good
+        double drive_ki = 0.00795; // 0.00049
+        double drive_kd = 0.775; //0 for good
         imuInit = imu.get_rotation();
 
         Timer t2000;
@@ -91,8 +91,8 @@ namespace pid{
 
             print_info_auton(t2000.getTime(), error, speed);
 
-            spin_left(speed + heading);
-            spin_right(speed - heading);
+            spin_left(speed - heading);
+            spin_right(speed + heading);
 
             if(t2000.getTime() > timeout){
                 break;
