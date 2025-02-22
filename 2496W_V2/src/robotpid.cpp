@@ -128,10 +128,10 @@ namespace pid{
         double TURN_KI;
         double TURN_KD;
 
-        if (fabs(target_deg) <= 185){
+         if (fabs(target_deg) <= 185){
             TURN_KP = 3.41; 
-            TURN_KI = 0.392; 
-            TURN_KD = 0.344; 
+            TURN_KI = 0.4; 
+            TURN_KD = 0.42; 
         }
         if (fabs(target_deg) <= 170) 
         {
@@ -149,20 +149,19 @@ namespace pid{
             // TURN_KD = 0.33; //last=.26//.25, .26(earlier), .27(90)
 
             TURN_KP = 3.3;
-            TURN_KI = 0.37; 
-            TURN_KD = 0.32; 
+            TURN_KI = 0.41; 
+            TURN_KD = 0.38; 
         }
         if (fabs(target_deg) < 110){
-            TURN_KP = 4.75; 
+            TURN_KP = 4.99; 
             TURN_KI = 0.48; 
-            TURN_KD = 0.42; 
+            TURN_KD = 0.55; 
         }
         if (fabs(target_deg) < 65){
             TURN_KP = 4.28; 
-            TURN_KI = 0.37; 
-            TURN_KD = 0.32; 
+            TURN_KI = 0.5; 
+            TURN_KD = 0.45; 
         }
-
         int starting;
 
         if (fabs(end_head) - fabs(imu.get_heading()) > 1) {
